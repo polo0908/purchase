@@ -1,0 +1,296 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%
+	String userName = request.getParameter("userName");
+	String userId = request.getParameter("userId");
+	String roleNo = request.getParameter("roleNo");
+%>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<title>进行中项目列表</title>
+<link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../layui/css/layui.css" />
+<link rel="stylesheet" href="../css/add.css">
+<style>
+button.layui-laypage-btn{position: relative;width: 80px;}
+</style>
+</head>
+<body>
+<form id="form" class="roleform form-horizontal" action="/project/selectProjectView" role="form">
+    <input type="hidden" value="${page}" name="page">
+    <input type="hidden" value="${pageSize}" name="pageSize">
+	<div class="customer_complaint_entry purchase_track_view" style="width:100%;">
+		<h1 class="customer_complaint_h1">
+			项目时间管理
+			<div class="btns">
+				<a class="select_blank btn" target="_blank" href="/user/toIndex">返回功能选择页</a>
+			</div>
+		</h1>
+		<div class="wrap1 mt10">
+			<div class="dates container" style="width:100%;">
+				<div class="row">
+					<div class="col-xs-10">
+					    <span class="pull-left and">采购</span>
+						<div class="add_date pull-left">
+							 <select id="purchase_name" name="purchaseName" onchange="select()">
+
+							 </select>
+						</div>
+						<span class="pull-left and">跟单</span>
+						<div class="add_date pull-left">
+							 <select id="documentary_name" name="sellName" onchange="select()">
+	
+							 </select>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 10px;">
+					<table class="table table-bordered" contenteditable="true">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>项目号</th>
+								<th>项目名</th>
+								<th>项目等级</th>
+								<th>客户名</th>
+								<th>工厂名</th>
+								<th>客户付款日期</th>
+								<th>上次送样日期/料到日期</th>
+								<th>目标完成日期</th>
+								<th>目前客户态度</th>
+								<th>项目状态</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+						   <c:forEach  var="obj" items="${projectList}" varStatus="i">
+								<tr>
+									<td>${i.index+1}</td>
+									<td>${obj.projectNo}</td>
+									<td>${obj.projectName}</td>
+									<td>${obj.plantAnalysis == 1 ? 'A' : (obj.plantAnalysis == 2 ? 'B': (obj.plantAnalysis == 3 ? 'C' : '暂无'))}</td>
+									<td>${obj.customerName}</td>
+									<td>${obj.companyName}</td>
+									<td><fmt:formatDate value="${obj.moneyDate}" pattern="yyyy-MM-dd"/></td>
+									<td field="${obj.projectNo}">
+                                          <div class="input-group date form_date col-sm-6 content" data-date="" data-date-format="yyyy-mm-dd">
+												<input class="form-control brt brt_7" size="16" type="text" style="width: 157px;" placeholder="选择日期" readonly  value="<fmt:formatDate value="${obj.prevSampleDate}" pattern="yyyy-MM-dd"/>"> <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+										  </div>
+									</td>
+									<td>
+									   <c:if test="${obj.deliveryDate!=null}">
+									     <p>大货：<fmt:formatDate value="${obj.deliveryDate}" pattern="yyyy-MM-dd"/></p>
+									   </c:if>
+									   <c:if test="${obj.sampleScheduledDate!=null}">
+									     <p>样品：<fmt:formatDate value="${obj.sampleScheduledDate}" pattern="yyyy-MM-dd"/></p>
+									   </c:if>
+									</td>
+									<td><textarea style="border: 1px solid #ccc;">${obj.customerAttitude}</textarea><button type="button" onclick="updateAttitude('${obj.projectNo}',this)">确认更新</button></td>
+									<td>${obj.report}</td>
+									<td><a onclick='window.location="/project/showDetails?projectNo=${obj.projectNo}"' target="_blank">详情</a></td>
+								</tr>
+						   </c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<center id="page" class="page"></center>
+		</div>
+	</div>
+</form>
+</body>
+</html>
+<script src="../lib/jquery/jquery.min.js"></script>
+<script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/jquery-form.js"></script>
+<script src="../layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../lib/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="../lib/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../layer/2.1/layer.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+
+    $(function(){
+    	ajaxSelectOption(); 
+    	
+    	
+
+    	    /* 日历插件*/ 
+    		$('.form_date').datetimepicker({
+    			language : 'zh-CN',
+    			weekStart : 1,
+    			todayBtn : 1,
+    			autoclose : 1,
+    			todayHighlight : 1,
+    			startView : 2,
+    			minView : 4,
+    			forceParse : 0
+    		});
+    		$('.table-condensed tbody,.table-condensed tfoot').on('click',function(){
+    			$('.datetimepicker').hide();  			
+    		})
+    		
+    		
+    		$('.brt_7,.brt').on('change',function(){
+    			var projectNo = $(this).parents('td').attr("field");
+    			var prevSampleDate = $(this).val();
+    			update(projectNo,prevSampleDate,'');
+    		})
+    		
+    })
+
+
+	//退出功能
+	function exitlogin() {
+		// 	$.cookie('name', '', {
+		// 		path : '/'
+		// 	});
+		// 	$.cookie('pass', '', {
+		// 		path : '/'
+		// 	});
+		window.location.href = "${ctx}/index.jsp";
+	}
+
+	//返回主页
+	function goBack() {
+		var roleNo = $("#roleNo").val();
+		var userId = $("#userId").val();
+		var userName = $("#userName").val();
+		var purchaseNameId = "";
+		window.location.href = "${ctx}/user/toIndex?userId=" + userId
+				+ "&roleNo=" + roleNo + "&purchaseNameId=" + purchaseNameId
+				+ "&userName=" + encodeURI(encodeURI(userName));
+	}
+	
+	
+	var purchaseName = '${purchaseName}';	
+	var documentaryName = '${documentaryName}';	
+	function ajaxSelectOption() {
+
+		$.ajax({
+			type : "post",
+			url : "${ctx}/project/queryStaff.do ",
+			success : function(json) {
+				if (json.ok) {
+					var purchaseList = json.data.purchase
+					var saleList = json.data.sale
+					var qualityList = json.data.quality
+					var purchaseHtml = '<option value="">全部采购</option>'
+					var saleHtml = '<option value="">全部跟单</option>'
+
+					for (var i = 0; i < purchaseList.length; i++) {
+						purchaseHtml += '<option value="'+purchaseList[i].userName+'">'+ purchaseList[i].userName+ '</option>';
+		         	}
+					for (var i = 0; i < saleList.length; i++) {
+						saleHtml += '<option value="'+saleList[i].userName+'">'+ saleList[i].userName + '</option>'
+					}
+					$('#purchase_name').html(purchaseHtml);
+					$('#documentary_name').html(saleHtml);
+				   //显示选择的采购、跟单、质检信息
+					if(purchaseName){
+					   $('#purchase_name').find("option[value="+purchaseName+"]").attr("selected",true);
+					}
+				    if(documentaryName){
+				       $('#documentary_name').find("option[value="+documentaryName+"]").attr("selected",true);
+				    }	   
+				}
+			}
+		 })
+		}
+	
+	
+	
+	function updateAttitude(projectNo,obj){
+		var customerAttitude = $(obj).prev().val();
+		if(customerAttitude){
+			update(projectNo,'',customerAttitude);
+		}
+	}
+	
+	 /**
+	  * 更新送样时间  客户态度
+	  */
+	 function update(projectNo,prevSampleDate,customerAttitude){
+		   		 
+	       $.ajax({ 
+			   url : "/project/updateProjectView", 
+			   type: "POST", 
+			   data : { 
+				   projectNo:projectNo,
+				   prevSampleDate:prevSampleDate,
+				   customerAttitude:customerAttitude
+			   }, 
+			   dataType:"json", 
+			   success : function(json) { 
+				   if(json.ok) 
+				    { 
+					   layer.msg('添加成功',{time:2000}); 
+				    }else{
+				      layer.msg(json.message,{time:2000});
+				    }
+			   }
+			})
+	 }
+	 
+	 
+	 //选择人员事件
+	 function select(){
+		 $('#form').submit();      
+	 }
+	
+	
+</script>
+
+<script type="text/javascript">
+
+		var total = ${total};
+		var pageSize = ${pageSize};
+		var page = ${page};
+		layui.use(['form', 'layedit', 'laydate', 'carousel', 'element', 'laypage'], function() {
+			var layer = layui.layer,
+				laypage = layui.laypage,
+				element = layui.element;
+
+			laypage.render({
+				elem: 'page',
+				count: total,
+				layout: ['page', 'limit', 'skip', 'count', ],
+				theme: '#3e88f5',
+				curr: page ,   //获取起始页					
+				limit: pageSize,
+				jump: function(obj, first) {
+					//obj包含了当前分页的所有参数，比如：
+					//		    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+					//		    console.log(obj.limit); //得到每页显示的条数
+					//首次不执行
+					if(!first) {
+						//					var load = layer.load(2, {shade: [0.1,'#000']});
+//						locationHref("page=" + obj.curr + "&limit=" + obj.limit, "#usteel-condition", "page");
+                        $('input[name="page"]').val(obj.curr);
+                        $('input[name="pageSize"]').val(obj.limit);
+                        $('#form').submit();                       
+					}
+				}
+			});
+		});
+		
+
+	</script>
+
+
+
+
+
+

@@ -1,0 +1,22 @@
+package com.cn.hnust.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cn.hnust.daoErp.ErpReportMapper;
+import com.cn.hnust.pojo.QualityReport;
+import com.cn.hnust.service.ErpReportService;
+@Service
+public class ErpReportServiceImpl implements ErpReportService {
+
+	@Autowired
+	private ErpReportMapper erpReportMapper;
+	
+	@Override
+	public List<QualityReport> selectErpReportByProjectNo(String projectNo) {
+		return erpReportMapper.selectErpReportByProjectNo(projectNo);
+	}
+
+}

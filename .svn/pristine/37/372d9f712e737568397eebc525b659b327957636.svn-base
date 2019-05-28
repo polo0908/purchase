@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.hnust.daoErp.InvoiceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.hnust.pojo.InvoiceInfo" >
+    <id column="iid" property="id" jdbcType="INTEGER" />
+    <result column="iCaseNo" property="caseNo" jdbcType="INTEGER" />
+    <result column="ifdate" property="ifdate" jdbcType="DATE" />
+    <result column="customercode" property="customercode" jdbcType="DATE" />
+    <!--虚拟字段  -->
+    <result column="singleNumber" property="singleNumber" jdbcType="INTEGER" />
+    <result column="subscribers" property="subscribers" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+     id,caseNo,ifdate 
+  </sql>
+  <select id="selectFirstDate" resultMap="BaseResultMap" >
+   select min(i.ifdate)ifdate,c.customercode from InvoiceInfo i  
+	inner JOIN 
+	(
+		select CaseNo,t1.customercode from itemCase t1 inner join 
+		(
+		select customercode from itemCase where CaseNo in(  
+          <foreach collection="list" item="item" index="index" separator="," >    
+              #{item}   
+          </foreach>  
+         )     
+		)t2 on t1.customercode = t2.customercode 
+	)c on i.iCaseNo = c.CaseNo GROUP BY c.customercode
+  </select>
+  
+<select id="getAll" resultMap="BaseResultMap" >
+      select a.singleNumber,b.subscribers from (
+    select count(1)singleNumber from itemcase it left join bargain ba on it.caseno=ba.caseno where CONVERT(varchar(7), it.CreateTime, 23)= #{iCaseNo,jdbcType=VARCHAR}
+and 
+(CustomerManager=#{customercode,jdbcType=VARCHAR}  or MerchandManager1=#{customercode,jdbcType=VARCHAR}  
+ or Merchandising=#{customercode,jdbcType=VARCHAR} ) and it.caseno  like '%-%' and ba.id is not null
+)a , (select count(1)subscribers from (select count(1)num1 from itemcase it left join bargain ba on it.caseno=ba.caseno where CONVERT(varchar(7), it.CreateTime, 23)= #{iCaseNo,jdbcType=VARCHAR}  
+and
+ (CustomerManager=#{customercode,jdbcType=VARCHAR}  or MerchandManager1=#{customercode,jdbcType=VARCHAR} 
+  or Merchandising=#{customercode,jdbcType=VARCHAR} ) and it.caseno  like '%-%' and ba.id is not null group by customercode)c)b
+  </select>
+  
+  
+   <select id="getAllMoney" resultType="String" >
+   select money1+money2+money3+money4 from (
+select isnull(a.money1,0)money1,isnull(b.money2,0)money2,isnull(c.money3,0)money3,isnull(d.money4,0)money4 from (
+select sum((ifmoney*project/100))money1 from (
+select ifmoney,icaseno,  CAST(replace(left(GrossProfit, 5),'%','') as decimal(9,2))project,it.CustomerManager    from itemcase it left join invoiceinfo info  on info.icaseno=it.caseno  where CONVERT(varchar(7), info.ifdate, 23)= #{iCaseNo,jdbcType=VARCHAR}
+   and (it.CustomerManager=#{customercode,jdbcType=VARCHAR} 
+   or MerchandManager1=#{customercode,jdbcType=VARCHAR}  
+   or Merchandising=#{customercode,jdbcType=VARCHAR}) and imoneytype=1) a 
+)a ,(
+   select sum((ifmoney*project/(100*6.8)))money2 from (
+select ifmoney,icaseno,  CAST(replace(left(GrossProfit, 5),'%','') as decimal(9,2))project,it.CustomerManager    from itemcase it  left join invoiceinfo info  on info.icaseno=it.caseno  where CONVERT(varchar(7), info.ifdate, 23)= #{iCaseNo,jdbcType=VARCHAR}
+   and (it.CustomerManager=#{customercode,jdbcType=VARCHAR} 
+   or MerchandManager1=#{customercode,jdbcType=VARCHAR}  
+   or Merchandising=#{customercode,jdbcType=VARCHAR}) and imoneytype=2) a 
+   )b , (
+   select sum((ifmoney*project*1.128/(100)))money3 from (
+select ifmoney,icaseno,  CAST(replace(left(GrossProfit, 5),'%','') as decimal(9,2))project,it.CustomerManager    from itemcase it left join invoiceinfo info on info.icaseno=it.caseno  where CONVERT(varchar(7), info.ifdate, 23)= #{iCaseNo,jdbcType=VARCHAR}
+   and (it.CustomerManager=#{customercode,jdbcType=VARCHAR} 
+   or MerchandManager1=#{customercode,jdbcType=VARCHAR}  
+   or Merchandising=#{customercode,jdbcType=VARCHAR})  and imoneytype=3) a 
+   )c ,
+   (
+   select sum((ifmoney*project*1.308/(100)))money4 from (
+select ifmoney,icaseno,  CAST(replace(left(GrossProfit, 5),'%','') as decimal(9,2))project,it.CustomerManager    from itemcase it left join invoiceinfo info on info.icaseno=it.caseno  where CONVERT(varchar(7), info.ifdate, 23)= #{iCaseNo,jdbcType=VARCHAR}
+   and (it.CustomerManager=#{customercode,jdbcType=VARCHAR} 
+   or MerchandManager1=#{customercode,jdbcType=VARCHAR}  
+   or Merchandising=#{customercode,jdbcType=VARCHAR})  and imoneytype=5) a 
+   )d )a
+  </select>
+  
+</mapper>

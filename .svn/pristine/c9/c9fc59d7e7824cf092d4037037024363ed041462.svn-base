@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/main/resources/jdbc.properties=UTF-8
+encoding//src/main/resources/log4j.properties=UTF-8
+encoding//src/main/webapp/index.jsp=UTF-8
+encoding//src/main/webapp/jsp=UTF-8
+encoding//src/main/webapp/jsp/project_detail.jsp=UTF-8
+encoding//src/main/webapp/jsp/project_list.jsp=UTF-8
+encoding//src/main/webapp/jsp/task_allocation.jsp=UTF-8
+encoding/src=UTF-8

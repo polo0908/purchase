@@ -110,15 +110,15 @@
   <!-- 根据条件查询客户投诉列表 -->
   <select id="queryComplaintList" parameterType="com.cn.hnust.pojo.ProjectComplaintQuery" resultMap="ResultMapWithBLOBs">
     select  
-     c.id, c.project_no,  c.complaint_date,  c.cost_analysis, c.purchase_id,  c.sell_id,  c.is_purchase ,p.project_name,p.customer_name,  
+     c.inspection_leader_confirm,c.inspection_leader_confirm_date,c.id, c.project_no,  c.complaint_date,  c.cost_analysis, c.purchase_id,  c.sell_id,  c.is_purchase ,p.project_name,p.customer_name,  
      c.is_sell,  c.create_time,  c.create_person,  c.purchase_content, c.sell_content, c.purchase_confirm_date,c.meeting_no, 
      c.sell_confirm_date,c.file_name,c.file_path,c.serious_level,c.zhijian_reply_time,c.technician_reply_time,c.complete_time,c.project_stage,
      <include refid="Blob_Column_List" />,p.zhijian1,p.zhijian2,p.zhijian3,p.purchase_name,s.process           
     from project_complaint c  
     left join  
     ( 
-    select project_no,project_name,purchase_id,email_user_id,company_name,customer_name,zhijian1,zhijian2,zhijian3,u.user_name as purchase_name from project    
-    left join user u on u.id = project.purchase_id  
+    select project_no,project_name,purchase_id,email_user_id,company_name,customer_name,zhijian1,zhijian2,zhijian3,u.user_name as purchase_name,u1.user_name as sell_name from project    
+    left join user u on u.id = project.purchase_id  left join user u1 on u1.id = project.email_user_id
     )p   
     on c.project_no = p.project_no  
     LEFT JOIN 
@@ -128,12 +128,18 @@
     where 1=1   
     <if test="isSolve == 2"> 
       and c.complete_time is not null 
-<!--       and purchase_leader_confirm != 0 and purchase_leader_confirm != 0   -->
+      and inspection_leader_confirm != 0  
     </if>
     <if test="isSolve == 0"> 
       and (c.complete_time is null  
-<!--       or  purchase_leader_confirm = 0 or purchase_leader_confirm = 0 -->
+      or  inspection_leader_confirm = 0 
           )
+    </if>
+    <if test="purchaseName !=null "> 
+      and p.purchase_name like  CONCAT('%', #{purchaseName}, '%')
+    </if>
+    <if test="sellName !=null "> 
+      and p.sell_name like  CONCAT('%', #{sellName}, '%')
     </if>
     
     <choose>
@@ -175,13 +181,26 @@
   <select id="queryCount" parameterType="com.cn.hnust.pojo.ProjectComplaintQuery" resultType="int">
     select count(1)    
     from project_complaint c 
-    left join project on c.project_no = project.project_no  
+    left join  
+    ( 
+    select project_no,project_name,purchase_id,email_user_id,company_name,customer_name,zhijian1,zhijian2,zhijian3,u.user_name as purchase_name,u1.user_name as sell_name from project    
+    left join user u on u.id = project.purchase_id   left join user u1 on u1.id = project.email_user_id
+    )project on c.project_no = project.project_no  
     where 1=1 
     <if test="isSolve == 2"> 
       and c.complete_time is not null   
+      and inspection_leader_confirm != 0 
     </if>
     <if test="isSolve == 0"> 
-      and c.complete_time is null 
+      and (c.complete_time is null  
+      or  inspection_leader_confirm = 0 
+          ) 
+    </if>
+    <if test="purchaseName !=null "> 
+      and project.purchase_name like  CONCAT('%', #{purchaseName}, '%')
+    </if>
+    <if test="sellName !=null "> 
+      and project.sell_name like  CONCAT('%', #{sellName}, '%')
     </if>
     <choose>
 	    <when test="roleNo == 100 or roleNo == 7">

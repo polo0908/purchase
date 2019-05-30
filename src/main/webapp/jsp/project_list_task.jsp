@@ -200,13 +200,13 @@ html {
 
 				var roleNo = $('#roleNo').val()
 
-				if (roleNo == 6) {
+				if (roleNo == 6 || roleNo == 69 || roleNo == 1020) {
 					$('#purchase_name').hide()
 				}
-				if (roleNo == 5) {
+				if (roleNo == 5 || roleNo == 1020) {
 					$('#documentary_name').hide()
 				}
-				if (roleNo == 9) {
+				if (roleNo == 9 || roleNo == 69 || roleNo == 1020) {
 					$('#quality_name').hide()
 				}
 
@@ -414,7 +414,7 @@ html {
 															+ (taskList[i].purchaseName ? taskList[i].purchaseName
 																	: "")
 															+ '</span></p>'
-												} else if (roleNo == 6) {
+												} else if (roleNo == 6 || roleNo == 69 || roleNo == 1020) {
 													taskHtml += '<p><span class="span-left">跟单销售：</span><span class="span-right">'
 															+ (taskList[i].sellName ? taskList[i].sellName
 																	: "")
@@ -453,7 +453,7 @@ html {
 											$("#projectTaskList").append(taskHtml);//任务列表	
 									}				
 
-									if (roleNo == 6) {//显示采购下拉框(销售,管理员显示)
+									if (roleNo == 6 || roleNo == 69 || roleNo == 1020) {//显示采购下拉框(销售,管理员显示)
 										$("#purchaseSelect").css("display",
 												"none");
 									} else {

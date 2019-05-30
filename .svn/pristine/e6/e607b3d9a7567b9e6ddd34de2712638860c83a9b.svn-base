@@ -689,7 +689,7 @@
 									pattern="yyyy-MM-dd" /></span>
 							<c:if test="${comments != null}">
 								<span class="pull-left blue"><fmt:formatDate
-										value="${comments[0].createDate}" pattern="yyyy-MM-dd" /></span>
+										value="${comments.get(0).createDate}" pattern="yyyy-MM-dd" /></span>
 							</c:if>
 						</p>
 					</c:when>

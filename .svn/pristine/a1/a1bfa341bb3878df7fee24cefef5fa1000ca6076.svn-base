@@ -13,7 +13,7 @@
     <result column="file_name" property="fileName" jdbcType="VARCHAR" />
     <result column="new_file_name" property="newFileName" jdbcType="VARCHAR" />
   </resultMap>
-  <sql id="Base_Column_List">
+  <sql id="Base_Column_List" >
     id, project_no, reviewer, comment, create_date,quality_report_id,file_name,new_file_name,shipping_id,complaint_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >

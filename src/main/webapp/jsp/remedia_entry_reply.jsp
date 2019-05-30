@@ -65,10 +65,10 @@
 		<c:forEach var="obj" items="${issueList}" varStatus="i">
 		<div class="form-group mt5 reply_div">
 			<p><em>问题${i.index+1}:</em><span class="reply" filed="${obj.id}">${obj.issue}</span></p>
-			<c:if test="${user.roleNo == 5 || user.roleNo == 6 || user.roleNo == 100 || user.roleNo == 99 || user.roleNo == 7}">
+			<c:if test="${user.roleNo == 1020 || user.roleNo == 69 || user.roleNo == 5 || user.roleNo == 6 || user.roleNo == 100 || user.roleNo == 99 || user.roleNo == 7}">
 				<textarea class="form-control mt5" placeholder="请输入问题${i.index+1} 是否解决问题如何解决问题 本栏采购/跟单填写"><c:forEach begin="1" end="${obj.replyList.size()}" varStatus="j" step="1"> <c:if test="${obj.replyList.get(j.count-1).replyType == 4}">${fn:trim(obj.replyList.get(j.count-1).replyContent)}</c:if></c:forEach></textarea>
 			</c:if>
-			<c:if test="${user.roleNo == 9  || user.roleNo == 100 || user.roleNo == 99}">
+			<c:if test="${user.roleNo == 9 || user.roleNo == 69 || user.roleNo == 100 || user.roleNo == 99}">
 				<div class="mt10 clearfix">
 					<label class="pull-left mr20">问题<span>${i.index+1}</span>验证结果</label>
 					<div class="pull-left radios">

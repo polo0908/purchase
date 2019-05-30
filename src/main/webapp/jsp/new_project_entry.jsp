@@ -265,7 +265,7 @@
 				<select class="form-control" id="purchaseName" name="purchaseName">
 				     <option></option>
 					 <c:forEach var="obj" items="${userList}" varStatus="i">
-					   <c:if test="${obj.roleNo == 6}">
+					   <c:if test="${obj.roleNo == 6 || obj.roleNo == 1020 || obj.roleNo == 69}">
 						<option value="${obj.userName}">${obj.userName}</option>
 						</c:if>
 	                 </c:forEach>

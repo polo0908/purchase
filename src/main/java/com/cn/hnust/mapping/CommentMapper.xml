@@ -13,7 +13,7 @@
     <result column="file_name" property="fileName" jdbcType="VARCHAR" />
     <result column="new_file_name" property="newFileName" jdbcType="VARCHAR" />
   </resultMap>
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, project_no, reviewer, comment, create_date,quality_report_id,file_name,new_file_name,shipping_id,complaint_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -45,9 +45,15 @@
   </select>
  <select id="selectByComplaintId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
-    from comment  
-    where complaint_id = #{complaintId,jdbcType=INTEGER} order by create_date desc
+    co.*
+    from comment co left join user  u on co.reviewer=u.user_name    
+    where complaint_id = #{complaintId,jdbcType=INTEGER} and u.job ='技术' order by create_date desc
+  </select>
+ <select id="selectByComplaintId1" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    co.*
+    from comment co left join user  u on co.reviewer=u.user_name    
+    where complaint_id = #{complaintId,jdbcType=INTEGER} and u.role_no in(5,6,69,1020) order by create_date desc
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >

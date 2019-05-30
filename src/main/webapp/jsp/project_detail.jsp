@@ -1678,7 +1678,7 @@
 // 				    	 var json = eval("(" + data +")");
 						 if(json.ok){
 							 layer.msg('保存成功',{time:2000}); 
-							 if(roleNo == 6){
+							 if(roleNo == 6 || roleNo == 1020 || roleNo == 69){
 								 $('#purchaseReply').text(issueReply);
 							 }
 							 if(userName.toLowerCase() == 'wangweiping'){

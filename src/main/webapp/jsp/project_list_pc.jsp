@@ -2482,7 +2482,7 @@ $(function(){
 		if (roleNo == 5) {
 			$('#documentary_name').parent('.showHtml').hide()
 		}
-		if (roleNo == 9) {
+		if (roleNo == 9 || roleNo == 69 || roleNo == 1020) {
 			$('#quality_name').parent('.showHtml').hide();
 		}
 
@@ -4469,8 +4469,8 @@ $(function(){
 			   if(json.ok) 
 			    { 
 				    var milestones = json.data;
-				    if(milestones && milestones.length>0){
-				    	$('.milestone').remove();
+				    $(".milestone:not(':first')").remove();
+				    if(milestones && milestones.length>0){				    	
 				    	var div = '';
 				    	for(var i=0;i<milestones.length;i++){
 				    		 var div = '<div class="milestone" filed1="'+milestones[i].uid+'" filed2="'+milestones[i].processInstanceId+'">'+
@@ -4554,6 +4554,9 @@ $(function(){
 			var processInstanceId = $(this).attr('filed2');
 			if(!processInstanceId){
 				processInstanceId = '';
+			}
+			if(!uid){
+				uid = '';
 			}
 			var milestoneName = $(this).find('.content').val();
 			var milestoneDate = $(this).find('input:last').val();

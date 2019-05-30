@@ -69,7 +69,7 @@
 			<textarea class="form-control mt5" id="purchase_content" name="purchaseContent">${projectComplaint.purchaseContent}</textarea>
 		</div>
 	</form>
-	<button class="btn btn-default display_block submit_type" <c:if test="${user.roleNo == 5 || user.roleNo == 6 || user.roleNo == 100 || user.roleNo == 99 || user.roleNo == 7}">onclick="addReply('${projectComplaint.id}')"</c:if>>提交所有内容并返回</button>
+	<button class="btn btn-default display_block submit_type" <c:if test="${user.roleNo == 1020 || user.roleNo == 5 || user.roleNo == 6 || user.roleNo == 69 || user.roleNo == 100 || user.roleNo == 99 || user.roleNo == 7}">onclick="addReply('${projectComplaint.id}')"</c:if>>提交所有内容并返回</button>
 </div>	
 </body>
 </html>

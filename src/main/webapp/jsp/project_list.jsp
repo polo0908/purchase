@@ -953,12 +953,12 @@
 												+ (new Date(taskList[i].finishTime)
 														.pattern("yyyy-MM-dd"))
 												+ '</span></p>'
-										if (roleNo == 5) {
+										if (roleNo == 5 || roleNo == 1020) {
 											taskHtml += '<p><span class="span-left">采购：</span><span class="span-right">'
 													+ (taskList[i].purchaseName ? taskList[i].purchaseName
 															: "")
 													+ '</span></p>'
-										} else if (roleNo == 6) {
+										} else if (roleNo == 6 || roleNo == 69 || roleNo == 1020) {
 											taskHtml += '<p><span class="span-left">跟单销售：</span><span class="span-right">'
 													+ (taskList[i].sellName?taskList[i].sellName:"")
 													+ '</span></p>'
